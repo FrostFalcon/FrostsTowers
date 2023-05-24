@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="ModHelperData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SparkTower\SparkTower.cs" />
     <Compile Include="SparkTower\SparkTowerBottomPath.cs" />
@@ -143,6 +144,9 @@
     <EmbeddedResource Include="SparkTower\Textures\SparkTower3xxDisplay.png" />
     <EmbeddedResource Include="SparkTower\Textures\SparkTowerx3xDisplay.png" />
     <EmbeddedResource Include="SparkTower\Textures\SparkTowerxx3Display.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

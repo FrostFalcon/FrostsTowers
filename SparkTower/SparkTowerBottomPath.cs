@@ -20,6 +20,17 @@ using Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors;
 using BTD_Mod_Helper.Api.Display;
 using Il2CppAssets.Scripts.Unity.Display;
 using Il2Cpp;
+using BTD_Mod_Helper.Api;
+using Il2CppAssets.Scripts.Simulation.Towers.Projectiles;
+using Il2CppAssets.Scripts.Unity.UI_New.InGame;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppAssets.Scripts.Models.GenericBehaviors;
+using Il2CppAssets.Scripts.Simulation.Bloons.Behaviors;
+
+using UnityEngine;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
+using Color = UnityEngine.Color;
+using MelonLoader;
 
 namespace FrostsTowers.SparkTower
 {
@@ -108,14 +119,14 @@ namespace FrostsTowers.SparkTower
             proj.AddBehavior(new CreateProjectileOnContactModel("moreLightning", proj2, new SingleEmissionModel("e", null), false, false, false));
 
             tower.GetAttackModel().AddWeapon(new WeaponModel("Discharge", 1, tower.tiers[0] >= 1 ? 2 : 2.5f, proj, 0, 0, 0, 0, false, false, new SingleEmissionAtTowerModel("emission", null)));
-            tower.GetAttackModel().weapons[1].AddBehavior(new EjectEffectModel("effect", new Il2CppAssets.Scripts.Utils.PrefabReference(), new EffectModel("model", new Il2CppAssets.Scripts.Utils.PrefabReference(), 3, 0.5f), 0.5f, false, false, false, false, false));
-            tower.GetAttackModel().weapons[1].projectile.ApplyDisplay<StaticBurstDisplay>();
+            tower.GetAttackModel().weapons[1].AddBehavior(new EjectEffectModel("effect", new Il2CppAssets.Scripts.Utils.PrefabReference(), new EffectModel("model", ModContent.CreatePrefabReference<DischargeDisplay>(), 3, 0.5f), 0.5f, Fullscreen.No, false, false, false, false));
+            //tower.GetAttackModel().weapons[1].projectile.RemoveBehavior<DisplayModel>();
         }
     }
 
     public class Electrosphere : ModUpgrade<SparkTower>
     {
-        public override string Icon => "SparkTowerIcon-100";
+        public override string Icon => "SparkTowerIcon-003";
 
         public override int Path => BOTTOM;
         public override int Tier => 5;
@@ -160,7 +171,24 @@ namespace FrostsTowers.SparkTower
 
         public override void ModifyDisplayNode(UnityDisplayNode node)
         {
-            node.SaveMeshTexture(0, "D:\\Downloads\\StaticBurst");
+            
+        }
+    }
+
+    public class DischargeDisplay : ModDisplay
+    {
+        public override string BaseDisplay => "2171756de70c7744cb59ec3302393d2a";
+
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            foreach (ParticleSystem ps in node.GetComponentsInChildren<ParticleSystem>())
+            {
+                ps.startSize *= 0.8f;
+                if (ps.gameObject.name == "Glow") ps.startColor = new Color(0.7f, 0.7f, 0.2f, 0.5f);
+                if (ps.gameObject.name == "Lightning") ps.startColor = new Color(0.7f, 0.5f, 0.2f, 1f);
+                if (ps.gameObject.name == "Pulse") ps.startColor = new Color(0.7f, 0.7f, 0.2f, 0.5f);
+                if (ps.gameObject.name == "PulseBig") ps.startColor = new Color(0, 0, 0, 0);
+            }
         }
     }
 }

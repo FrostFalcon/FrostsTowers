@@ -24,6 +24,7 @@ using Il2CppAssets.Scripts.Models.Audio;
 using BTD_Mod_Helper.Api.Display;
 using Il2CppAssets.Scripts.Unity.Display;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
 
 namespace FrostsTowers.SparkTower
 {
@@ -92,12 +93,18 @@ namespace FrostsTowers.SparkTower
                     filter1,
                     t5Filter
                 }), false, false, 0));
+
+            tower.AddBehavior(new PierceSupportModel("T5PierceBuff", false, 3, "ConvergenceCannonPierceBuff", new Il2CppReferenceArray<TowerFilterModel>(new TowerFilterModel[]
+                {
+                    filter1,
+                    t5Filter
+                }), false, "", ""));
         }
     }
 
     public class EmergencyPowerReserves : ModUpgrade<SparkTower>
     {
-        public override string Icon => "SparkTowerIcon-010";
+        public override string Icon => "SparkTowerIcon-100";
 
         public override int Path => MIDDLE;
         public override int Tier => 4;
@@ -118,7 +125,7 @@ namespace FrostsTowers.SparkTower
             az.canEffectThisTower = true;
             az.lifespan = 10;
             az.lifespanFrames = 599;
-            az.displayModel = new DisplayModel("display", ModContent.CreatePrefabReference<EPRBuffDisplay>(), 0, Vector3.zero, 1, false, -1);
+            az.displayModel = new DisplayModel("display", ModContent.CreatePrefabReference<EPRBuffDisplay>(), 0, DisplayCategory.Buff, Vector3.zero, 1, false, -1);
             az.filters = new Il2CppReferenceArray<TowerFilterModel>(new TowerFilterModel[] { filter1 });
             az.buffIconName = "";
             az.buffLocsName = "";
@@ -147,10 +154,24 @@ namespace FrostsTowers.SparkTower
 
         public override void ApplyUpgrade(TowerModel tower)
         {
-            tower.GetWeapon().projectile.GetDamageModel().damage = 10;
-            tower.GetWeapon().projectile.pierce += 4;
-            tower.GetWeapon().projectile.scale *= 3;
-            tower.GetWeapon().rate /= 1.25f;
+            tower.GetWeapon().projectile.GetDamageModel().damage = 15;
+            tower.GetWeapon().projectile.pierce += 14;
+            tower.GetWeapon().projectile.radius *= 5;
+            tower.GetWeapon().projectile.ApplyDisplay<StaticBurstDisplay>();
+            tower.GetWeapon().projectile.scale *= 1.3f;
+            tower.GetWeapon().projectile.GetBehavior<TravelStraitModel>().speed /= 12;
+            tower.GetWeapon().projectile.GetBehavior<TravelStraitModel>().lifespan = 300;
+            tower.GetWeapon().rate *= 1.25f;
+
+            if (tower.tiers[2] >= 1)
+            {
+                tower.GetWeapon().projectile.RemoveBehavior<RetargetOnContactModel>();
+                tower.GetWeapon().projectile.AddBehavior(new TrackTargetModel("Homing", 80, true, false, 135, false, 90, false, false));
+            }
+            else
+            {
+                tower.GetWeapon().projectile.AddBehavior(new TrackTargetModel("Homing", 40, true, false, 45, false, 45, false, false));
+            }
         }
     }
 
@@ -160,7 +181,7 @@ namespace FrostsTowers.SparkTower
 
         public override void ModifyDisplayNode(UnityDisplayNode node)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
